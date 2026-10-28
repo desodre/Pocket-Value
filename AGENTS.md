@@ -10,7 +10,7 @@ Ao iniciar o projeto, use `flutter create --platforms=android,ios .`. Organize `
 
 ## Dados e dependências
 
-Planeje adaptadores para a **brapi** (B3/Ibovespa) e **Twelve Data** (mercados internacionais). Confirme cobertura, licença de exibição, limites e atraso de cada plano antes de ligar uma fonte real. Use `dio` para HTTP com timeout, `flutter_riverpod` para estado assíncrono, `intl` para números e datas e `home_widget` para compartilhar dados com os widgets. Mantenha os fornecedores substituíveis por interfaces e use respostas fixas apenas em testes e prévias identificadas como demonstração. Não inclua chaves de API no repositório nem em binários distribuídos; para produção, obtenha as cotações por um serviço que guarde as credenciais.
+Use a [documentação brapi](https://brapi.dev/docs) e a [documentação Twelve Data](https://twelvedata.com/docs/introduction/overview) como fontes de verdade dos contratos. Mantenha adaptadores para a **brapi** (B3/Ibovespa) e **Twelve Data** (mercados internacionais). Confirme cobertura, licença de exibição, limites e atraso de cada plano antes de ligar uma fonte real. Use `dio` para HTTP com timeout, `flutter_riverpod` para estado assíncrono, `intl` para números e datas e `home_widget` para compartilhar dados com os widgets. Mantenha os fornecedores substituíveis por interfaces e use respostas fixas apenas em testes e prévias identificadas como demonstração. Neste app pessoal, a primeira execução importa `.env` para `flutter_secure_storage`; `.env` não pode ser commitado e builds com chaves pessoais não podem ser distribuídos. Para produção, obtenha as cotações por um serviço que guarde as credenciais.
 
 ## Interface e widgets do dispositivo
 
@@ -19,3 +19,7 @@ Adote azul marinho escuro como fundo principal, preto para superfícies e branco
 ## Desenvolvimento e qualidade
 
 Use Dart formatado por `dart format` e as regras de `flutter_lints`; nomes de arquivos em `snake_case`, classes em `UpperCamelCase` e variáveis em `lowerCamelCase`. Execute `flutter pub get`, `flutter analyze` e `flutter test` antes de concluir mudanças. Para executar, use `flutter run -d <device>`; valide o build Android com `flutter build apk` e o iOS em macOS com `flutter build ios --no-codesign`. Teste parsing, formatação, estados de erro e dados antigos, seleção da lista e payload dos widgets. Verifique instalação, redimensionamento, toque e atualização dos widgets em dispositivos reais de ambas as plataformas quando disponíveis. Documente no README configurações, provedores, limites e passos de execução. Atualize este guia quando mudar a arquitetura ou o fluxo de trabalho.
+
+## Estado atual dos widgets
+
+A tela salva a seleção e o contrato `WidgetSnapshot` para a futura ponte nativa. Não apresente essa seleção como um widget já instalado: App Widget, WidgetKit, `home_widget` e deep links ainda precisam ser implementados e testados.
