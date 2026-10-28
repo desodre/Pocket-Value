@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'core/app_theme.dart';
+import 'core/immersive_mode.dart';
 import 'core/local_store.dart';
 import 'features/markets/market_api.dart';
 import 'features/markets/home_screen.dart';
@@ -59,6 +60,8 @@ class PocketValueApp extends StatelessWidget {
     title: 'PocketValue',
     debugShowCheckedModeBanner: false,
     theme: pocketTheme(),
+    builder: (context, child) =>
+        ImmersiveMode(child: child ?? const SizedBox.shrink()),
     home: const HomeScreen(),
   );
 }
