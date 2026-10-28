@@ -1,6 +1,8 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LocalStore {
@@ -33,6 +35,46 @@ class LocalStore {
     } else {
       await secrets.write(key: provider, value: value.trim());
     }
+  }
+
+  /// Imports personal credentials from .env on first launch only.
+  Future<void> importLocalCredentials() async {
+    if (preferences.getBool('credentials.imported') == true) return;
+    final values = <String, String>{};
+    try {
+      final source = await rootBundle.loadString('.env');
+      for (final rawLine in source.split('\n')) {
+        var line = rawLine.trim();
+        if (line.startsWith('export ')) line = line.substring(7).trimLeft();
+        if (line.isEmpty || line.startsWith('#') || !line.contains('=')) {
+          continue;
+        }
+        final separator = line.indexOf('=');
+        final name = line.substring(0, separator).trim();
+        var value = line.substring(separator + 1).trim();
+        if (value.length >= 2 &&
+            ((value.startsWith('"') && value.endsWith('"')) ||
+                (value.startsWith("'") && value.endsWith("'")))) {
+          value = value.substring(1, value.length - 1);
+        }
+        values[name] = value;
+      }
+    } on FlutterError {
+      // The user can still enter credentials later in Settings.
+    }
+
+    final brapiKey = values['BRAPI_API_KEY']?.trim() ?? '';
+    final twelveKey =
+        values['TWELVE_DATA_API_KEY']?.trim() ??
+        values['TWELV_DATA_API_KEY']?.trim() ??
+        '';
+    if (await key('brapi') == '' && brapiKey.isNotEmpty) {
+      await setKey('brapi', brapiKey);
+    }
+    if (await key('twelve') == '' && twelveKey.isNotEmpty) {
+      await setKey('twelve', twelveKey);
+    }
+    await preferences.setBool('credentials.imported', true);
   }
 
   // Persist the local credit budget across app restarts. Other clients sharing

@@ -12,6 +12,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   try {
     final store = LocalStore(await SharedPreferences.getInstance());
+    await store.importLocalCredentials();
     final controller = DashboardController(HttpMarketApi(store), store);
     runApp(
       ProviderScope(
